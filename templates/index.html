@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Écriture dans Excel en temps réel</title>
+  <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var socket = io();
+
+      socket.on('connect', function() {
+        console.log('Connecté au serveur');
+      });
+
+      socket.on('data_saved', function(data) {
+        alert('Données enregistrées : ' + JSON.stringify(data));
+      });
+
+      document.getElementById('dataForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var nom = document.getElementById('nom').value;
+        var prenom = document.getElementById('prenom').value;
+        var email = document.getElementById('email').value;
+        socket.emit('submit_data', { nom: nom, prenom: prenom, email: email });
+        document.getElementById('dataForm').reset();
+      });
+    });
+  </script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+  <div class="bg-white p-8 rounded shadow-md w-196">
+    <h1 class="text-2xl font-semibold mb-6 text-center">Entrer des données dans l'Excel</h1>
+    <form id="dataForm" class="space-y-4">
+      <div>
+        <label for="nom" class="block text-gray-700 text-sm font-bold mb-2">Nom :</label>
+        <input type="text" id="nom" name="nom" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+      </div>
+      <div>
+        <label for="prenom" class="block text-gray-700 text-sm font-bold mb-2">Prénom :</label>
+        <input type="text" id="prenom" name="prenom" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+      </div>
+      <div>
+        <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email :</label>
+        <input type="email" id="email" name="email" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+      </div>
+      <button type="submit" class="bg-black hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full">Envoyer</button>
+    </form>
+    <p class="mt-4 text-center"><a href="{{ url_for('login') }}" class="text-blue-500 hover:text-blue-700">Admin</a></p>
+  </div>
+</body>
+</html>
